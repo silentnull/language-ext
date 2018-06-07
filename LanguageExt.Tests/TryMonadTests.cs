@@ -1,10 +1,9 @@
 ﻿using Xunit;
 using LanguageExt;
-using System.IO;
-using System.Collections.Generic;
 using static LanguageExt.Prelude;
+using LanguageExt.ClassInstances;
 using System;
-using System.Net;
+using System.Net.Http;
 
 namespace LanguageExtTests
 {
@@ -130,8 +129,8 @@ namespace LanguageExtTests
                 );
         }
 
-        public Try<string> GetValue(bool select) =>
-            () => select
+        public Try<string> GetValue(bool select) => () => 
+            select
                 ? "Hello, World"
                 : failwith<string>("Failed!");
 
@@ -153,42 +152,37 @@ namespace LanguageExtTests
         Try<Uri> parseUri(string uri) => () =>
             new Uri(uri);
 
-        Try<WebRequest> openConnection(Uri uri) => () =>
-            WebRequest.CreateDefault(uri);
+        Try<HttpClient> getClient() => () =>
+            new HttpClient();
 
-        Try<WebResponse> getInputStream(WebRequest req) => () =>
-            req.GetResponse();
+        Try<string> getContent(Uri uri, HttpClient client) => () =>
+            client.GetStringAsync(uri).Result;
 
-        Try<Stream> getSource(WebResponse resp) => () =>
-            resp.GetResponseStream();
+        Try<Lst<string>> getLines(string text) => () =>
+            text.Split('\n').Freeze();
 
-        IEnumerable<string> readAllLines(Stream stream)
+        Try<Lst<string>> getURLContent(string uri) =>
+            from address in parseUri(uri)
+            from result in use(
+                getClient(),
+                client => from content in getContent(address, client)
+                          from lines in getLines(content)
+                          select lines)
+            select result;
+
+        [Fact]
+        public void UrlTest()
         {
-            List<char> cs = new List<char>();
-            while (true)
-            {
-                int b = stream.ReadByte();
-                if (b == -1 || b == 0) yield break;
+            // Iterates all lines of content
+            getURLContent("http://www.google.com").IterT(x => Console.WriteLine(x));
 
-                if (b == 13)
-                {
-                    yield return new String(cs.ToArray());
-                    cs.Clear();
-                }
-                if (b > 30) cs.Add((char)b);
-            }
+            // Counts the number of lines
+            int numberOfLines = getURLContent("http://www.google.com").CountT();
+
+            // Maps the lines to line-lengths, then sums them
+            int totalSize = getURLContent("http://www.google.com")
+                                .MapT(x => x.Length)
+                                .SumT<TInt, int>();
         }
-
-        Try<IEnumerable<string>> getLines(Stream stream) => () =>
-            TryResult.Cast(readAllLines(stream));
-
-        public Try<IEnumerable<string>> getURLContent(string url) =>
-            from u      in parseUri(url)
-            from conn   in openConnection(u)
-            from stream in use(getInputStream(conn))
-            from source in use(getSource(stream.Value))
-            from lines  in getLines(source.Value)
-            from line   in lines
-            select line;
     }
 }

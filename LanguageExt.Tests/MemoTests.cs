@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using System;
+using System.Linq;
 using LanguageExt;
 using static LanguageExt.List;
 using static LanguageExt.Prelude;
@@ -34,7 +35,7 @@ namespace LanguageExtTests
 
             Func<int, int> fn = x => x + fix;
 
-            var m = fn.memoUnsafe();
+            var m = fn.MemoUnsafe();
 
             var nums1 = map(Range(0, count), i => m(i));
 
@@ -53,21 +54,30 @@ namespace LanguageExtTests
             GC.Collect();
 
             var fix = 0;
-            var count = 1000;
+            var count = 100;
 
             Func<int, int> fn = x => x + fix;
 
-            var m = fn.memo();
+            var m = fn.Memo();
 
             var nums1 = freeze(map(Range(0, count), i => m(i)));
 
-            fix = 1000;
+            fix = 100;
 
             var nums2 = freeze(map(Range(0, count), i => m(i)));
 
             var matches = length(filter(zip(nums1, nums2, (a, b) => a == b), v => v));
 
             Assert.True(matches == count, "Numbers don't match (" + matches + " total matches, should be " + count + ")");
+        }
+
+        [Fact]
+        public void ListMemoTest()
+        {
+            var vals = List(1,2,3,4,5).Memo();
+
+            Assert.True(vals.Sum() == 15);
+            Assert.True(vals.Sum() == 15);
         }
 
         /*      
@@ -79,14 +89,14 @@ namespace LanguageExtTests
             var mbStart = GC.GetTotalMemory(false) / 1048576L;
 
             Func<int, string> fn = x => x.ToString();
-            var m = fn.memo();
+            var m = fn.Memo();
 
-            range(0, Int32.MaxValue).Iter(i => m(i));
+            Range(0, Int32.MaxValue).Iter(i => m(i));
 
             var mbFinish = GC.GetTotalMemory(false) / 1048576L;
 
             Assert.True(mbFinish - mbStart < 30);
         }
-            */
+        */
     }
 }

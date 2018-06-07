@@ -178,5 +178,196 @@ namespace LanguageExtTests
             Assert.True(vel.MetresPerSecond == 49.0);
             Assert.True(len.Metres == 245.0);
         }
+
+        [Fact]
+        public void AccelObjectEquals_Both0_True() =>
+            AssertTypeObjectEquals<Accel>(0 * m / s / s);
+
+        [Fact]
+        public void AreaObjectEquals_Both0_True() =>
+            AssertTypeObjectEquals<Area>(0 * m * m);
+
+        [Fact]
+        public void LengthObjectEquals_Both0_True() =>
+            AssertTypeObjectEquals<Length>(0 * m);
+
+        [Fact]
+        public void TimeObjectEquals_Both0_True() =>
+            AssertTypeObjectEquals<Time>(0 * s);
+
+        [Fact]
+        public void TimeSqObjectEquals_Both0_True() =>
+            AssertTypeObjectEquals<TimeSq>(0 * s * s);
+
+        [Fact]
+        public void VelocityObjectEquals_Both0_True() =>
+            AssertTypeObjectEquals<Velocity>(0 * m / s);
+
+        [Fact]
+        public void VelocitySqObjectEquals_Both0_True() =>
+            AssertTypeObjectEquals<VelocitySq>((0 * m / s) * (0 * m / s));
+
+        private void AssertTypeObjectEquals<T>(T t)
+        {
+            object o1 = t;
+            object o2 = t;
+            Assert.True(o1.Equals(o2));
+        }
+
+        [Fact]
+        public void CelciusToStringTest()
+        {
+            var x = 10 * degC;
+            Assert.True(x.ToString() == "10 °C");
+        }
+
+        [Fact]
+        public void CelciusAddTest()
+        {
+            var x = 10 * degC;
+            var y = 20 * degC;
+            var z = 30 * degC;
+
+            Assert.True(x + y == z);
+        }
+
+        [Fact]
+        public void CelciusSubTest()
+        {
+            var x = 10 * degC;
+            var y = 20 * degC;
+            var z = 30 * degC;
+
+            Assert.True(z - y == x);
+        }
+
+        [Fact]
+        public void CelciusScalar1Test()
+        {
+            var x = 10 * degC;
+            var y = 20 * degC;
+
+            Assert.True(x * 2.0 == y);
+        }
+
+        [Fact]
+        public void CelciusScalar2Test()
+        {
+            var x = 10 * degC;
+            var y = 20 * degC;
+
+            Assert.True(y / 2.0 == x);
+        }
+
+        [Fact]
+        public void FahrenheitToStringTest()
+        {
+            var x = 10 * degF;
+            Assert.True(x.ToString() == "10 °F");
+        }
+
+        [Fact]
+        public void FahrenheitAddTest()
+        {
+            var x = 10 * degF;
+            var y = 20 * degF;
+            var z = 30 * degF;
+
+            Assert.True(x + y == z);
+        }
+
+        [Fact]
+        public void FahrenheitSubTest()
+        {
+            var x = 10 * degF;
+            var y = 20 * degF;
+            var z = 30 * degF;
+
+            Assert.True(z - y == x);
+        }
+
+        [Fact]
+        public void FahrenheitScalar1Test()
+        {
+            var x = 10 * degF;
+            var y = 20 * degF;
+
+            Assert.True(x * 2.0 == y);
+        }
+
+        [Fact]
+        public void FahrenheitScalar2Test()
+        {
+            var x = 10 * degF;
+            var y = 20 * degF;
+
+            Assert.True(y / 2.0 == x);
+        }
+
+        [Fact]
+        public void KelvinToStringTest()
+        {
+            var x = 10 * K;
+            Assert.True(x.ToString() == "10 K");
+        }
+
+        [Fact]
+        public void KelvinAddTest()
+        {
+            var x = 10 * K;
+            var y = 20 * K;
+            var z = 30 * K;
+
+            Assert.True(x + y == z);
+        }
+
+        [Fact]
+        public void KelvinSubTest()
+        {
+            var x = 10 * K;
+            var y = 20 * K;
+            var z = 30 * K;
+
+            Assert.True(z - y == x);
+        }
+
+        [Fact]
+        public void KelvinScalar1Test()
+        {
+            var x = 10 * K;
+            var y = 20 * K;
+
+            Assert.True(x * 2.0 == y);
+        }
+
+        [Fact]
+        public void KelvinScalar2Test()
+        {
+            var x = 10 * K;
+            var y = 20 * K;
+
+            Assert.True(y / 2.0 == x);
+        }
+
+        [Fact]
+        public void KelvinAddCelciusTest()
+        {
+            var x = 10 * K;
+            var y = 20 * degC;
+            var z = (10 * K) + (20 * degC).Kelvin;
+
+            Assert.True(x + y == z);
+        }
+
+        [Fact]
+        public void KelvinAddFahrenheitTest()
+        {
+            var x = 10 * K;
+            var y = 20 * degF;
+            var z = (10 * K) + (20 * degF).Kelvin;
+
+            Assert.True(x + y == z);
+        }
+
     }
 }
